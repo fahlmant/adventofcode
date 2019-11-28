@@ -21,7 +21,7 @@ func main() {
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
 		line := scanner.Text()
-		if containsThreeVowels(line) && containsLetterPair(line) && !containsForbiddenStrings(line) {
+		if containsSemiRepleatedLetter(line) && containsDoublePairs(line) {
 			niceStrings++
 		}
 	}
@@ -29,20 +29,22 @@ func main() {
 	fmt.Println(niceStrings)
 }
 
-func containsThreeVowels(line string) bool {
+func containsSemiRepleatedLetter(line string) bool {
 
-	vowels := 0
-	for _, vowel := range []string{"a", "e", "i", "o", "u"} {
-		vowels += strings.Count(line, vowel)
+	for i := 0; i < len(line)-2; i++ {
+		if line[i] == line[i+2] {
+			return true
+		}
 	}
 
-	return vowels >= 3
+	return false
+
 }
 
-func containsLetterPair(line string) bool {
+func containsDoublePairs(line string) bool {
 
-	for i := 0; i < len(line)-1; i++ {
-		if line[i] == line[i+1] {
+	for i := 0; i < len(line)-2; i++ {
+		if strings.Count(line, line[i:i+2]) >= 2 {
 			return true
 		}
 	}
