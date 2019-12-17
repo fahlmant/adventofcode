@@ -57,8 +57,7 @@ func RunIntcode(instructions []int, input int) []int {
 			offset += arg1
 			index += 2
 		case 99:
-			fmt.Println(results)
-			os.Exit(0)
+			return results
 		default:
 			fmt.Println(opcode)
 			fmt.Println("Invalid opcode")
