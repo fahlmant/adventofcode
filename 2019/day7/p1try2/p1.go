@@ -61,7 +61,6 @@ func main() {
 func buildCombinationsList(low, high int) [][]int {
 
 	rand.Seed(time.Now().Unix())
-
 	var combinationList [][]int
 
 	for len(combinationList) < (factorial(high) - factorial(low)) {

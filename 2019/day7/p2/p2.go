@@ -4,12 +4,13 @@ import (
 	"bufio"
 	"fmt"
 	"log"
-	"math"
 	"math/rand"
 	"os"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/fahlmant/adventofcode/2019/day7/localintcode"
 )
 
 func main() {
@@ -36,10 +37,25 @@ func main() {
 	}
 	possiblePhaseSettings := buildCombinationsList(5, 10)
 	for _, setting := range possiblePhaseSettings {
-		result := runAmplifiers(instructions, setting)
 
-		if result > max {
-			max = result
+		//Run first iteration with phase settings
+		computerA := localintcode.Computer{PC: 0, Offset: 0, Input: []int{setting[0], 0}, Output: 0, Instructions: instructions}
+		computerA.RunProgram()
+		computerB := intcode.Computer{PC: 0, Offset: 0, Input: []int{setting[1], computerA.Output}, Output: 0, Instructions: instructions}
+		computerB.RunProgram()
+		computerC := intcode.Computer{PC: 0, Offset: 0, Input: []int{setting[2], computerB.Output}, Output: 0, Instructions: instructions}
+		computerC.RunProgram()
+		computerD := intcode.Computer{PC: 0, Offset: 0, Input: []int{setting[3], computerC.Output}, Output: 0, Instructions: instructions}
+		computerD.RunProgram()
+		computerE := intcode.Computer{PC: 0, Offset: 0, Input: []int{setting[4], computerD.Output}, Output: 0, Instructions: instructions}
+		computerE.RunProgram()
+
+		for computerE.Instructions[computerE.PC] != 99 {
+
+		}
+
+		if computerE.Output > max {
+			max = computerE.Output
 		}
 	}
 
@@ -47,130 +63,15 @@ func main() {
 
 }
 
-func runAmplifiers(instructions []int, phases []int) int {
-
-	input := make(chan int)
-
-	output := 0
-	input <- 0
-
-	for _, phase := range phases {
-		go intcodeProcessor(instructions, phase, input)
-	}
-
-	return output
-
-}
-
-func intcodeProcessor(instructions []int, input1 int, c chan int) {
-
-	var results []int
-
-	results = append(results, input1)
-
-	instructions[instructions[1]] = input1
-
-	index := 2
-	for {
-
-		opcode, arg1, arg2, arg3 := getValues(instructions, index)
-		switch opcode {
-		case 1:
-			instructions[arg3] = arg1 + arg2
-			index += 4
-		case 2:
-			instructions[arg3] = arg1 * arg2
-			index += 4
-		case 3:
-			instructions[arg1] = <-c
-			index += 2
-		case 4:
-			results = append(results, instructions[arg1])
-			index += 2
-			c <- results[len(results)-1]
-		case 5:
-			if arg1 != 0 {
-				index = arg2
-			} else {
-				index += 3
-			}
-		case 6:
-			if arg1 == 0 {
-				index = arg2
-			} else {
-				index += 3
-			}
-		case 7:
-			if arg1 < arg2 {
-				instructions[arg3] = 1
-			} else {
-				instructions[arg3] = 0
-			}
-			index += 4
-		case 8:
-			if arg1 == arg2 {
-				instructions[arg3] = 1
-			} else {
-				instructions[arg3] = 0
-			}
-			index += 4
-		case 99:
-			c <- results[len(results)-1]
-		default:
-			fmt.Println("Invalid opcode")
-			fmt.Println(opcode)
-			os.Exit(1)
-		}
-	}
-}
-
-func getValues(instructions []int, index int) (int, int, int, int) {
-
-	instruction := instructions[index]
-	opcode := instruction % 100
-	if opcode == 99 {
-		return instruction, 0, 0, 0
-	}
-
-	if opcode == 3 || opcode == 4 {
-		return opcode, instructions[index+1], 0, 0
-	}
-
-	if inSlice([]int{1, 2, 5, 6, 7, 8}, opcode) {
-
-		var arg1, arg2, arg3 int
-
-		if !inSlice([]int{5, 6}, opcode) {
-			arg3 = instructions[index+3]
-		}
-
-		if math.Floor(float64((instruction%1000)/100)) == 1 {
-
-			arg1 = instructions[index+1]
-		} else {
-			arg1 = instructions[instructions[index+1]]
-		}
-		if math.Floor(float64((instruction%10000)/1000)) == 1 {
-			arg2 = instructions[index+2]
-		} else {
-			arg2 = instructions[instructions[index+2]]
-		}
-		return opcode, arg1, arg2, arg3
-	}
-
-	return opcode, 0, 0, 0
-}
-
 func buildCombinationsList(low, high int) [][]int {
 
 	rand.Seed(time.Now().Unix())
-
 	var combinationList [][]int
 
-	for len(combinationList) < 5*4*3*2 {
-
+	for len(combinationList) < (factorial(high) - factorial(low)) {
 		var combination string
 		for len(combination) < 5 {
+
 			if len(combination) < 1 {
 				combination = strconv.Itoa(rand.Intn(high-low) + low)
 			}
@@ -208,16 +109,6 @@ func stringToIntArray(value string) []int {
 func sliceInSlice(slice [][]int, value []int) bool {
 	for _, v := range slice {
 		if equal(value, v) {
-			return true
-		}
-	}
-	return false
-}
-
-func inSlice(slice []int, value int) bool {
-
-	for _, v := range slice {
-		if value == v {
 			return true
 		}
 	}
