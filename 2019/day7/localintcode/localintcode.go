@@ -6,8 +6,8 @@ import (
 )
 
 type Computer struct {
-	PC, Offset, Output  int
-	Instructions, Input []int
+	PC, Offset                  int
+	Instructions, Input, Output []int
 }
 
 func (c *Computer) RunProgram() {
@@ -24,15 +24,16 @@ func (c *Computer) RunProgram() {
 			c.Instructions[arg3] = c.Instructions[arg1] * c.Instructions[arg2]
 			c.PC += 4
 		case 3:
-			if len(c.Input) >= 1{
+			if len(c.Input) >= 1 {
 				input := c.Input[0]
 				c.Input = c.Input[1:]
 				c.Instructions[arg1] = input
 			}
 			c.PC += 2
 		case 4:
-			c.Output = c.Instructions[arg1]
-			c.PC +=2
+			c.Output = append(c.Output, c.Instructions[arg1])
+			c.PC += 2
+			return
 		case 5:
 			if c.Instructions[arg1] != 0 {
 				c.PC = c.Instructions[arg2]
@@ -59,6 +60,9 @@ func (c *Computer) RunProgram() {
 				c.Instructions[arg3] = 0
 			}
 			c.PC += 4
+		case 9:
+			c.Offset += c.Instructions[arg1]
+			c.PC += 2
 		case 99:
 			return
 		default:
@@ -81,8 +85,8 @@ func (c *Computer) parseOpcode(instruction int) (int, int, int, int) {
 		instructionString = ""
 	} else {
 		//Extract opcode from instruction and remove it from string
-		opcode, _ = strconv.Atoi(instructionString[len(instructionString) - 2:])
-		instructionString = instructionString[:len(instructionString) - 2]
+		opcode, _ = strconv.Atoi(instructionString[len(instructionString)-2:])
+		instructionString = instructionString[:len(instructionString)-2]
 	}
 
 	//Set the arguments to the defaultopode
@@ -94,7 +98,7 @@ func (c *Computer) parseOpcode(instruction int) (int, int, int, int) {
 		if opcode != 9 {
 			arg2 = c.Instructions[c.PC+2]
 			//3 and 4 only have 2 arguments
-			if !inSlice([]int{3,4}, opcode) {
+			if !inSlice([]int{3, 4}, opcode) {
 				arg3 = c.Instructions[c.PC+3]
 			}
 		}
@@ -107,7 +111,7 @@ func (c *Computer) parseOpcode(instruction int) (int, int, int, int) {
 		if mode == 1 {
 			arg3 = c.PC + 3
 		} else if mode == 2 {
-
+			arg3 = c.Instructions[c.PC+3] + c.Offset
 		}
 		instructionString = instructionString[1:]
 	}
@@ -117,7 +121,7 @@ func (c *Computer) parseOpcode(instruction int) (int, int, int, int) {
 		if mode == 1 {
 			arg2 = c.PC + 2
 		} else if mode == 2 {
-
+			arg2 = c.Instructions[c.PC+2] + c.Offset
 		}
 		instructionString = instructionString[1:]
 	}
@@ -127,7 +131,7 @@ func (c *Computer) parseOpcode(instruction int) (int, int, int, int) {
 		if mode == 1 {
 			arg1 = c.PC + 1
 		} else if mode == 2 {
-
+			arg1 = c.Instructions[c.PC+1] + c.Offset
 		}
 		instructionString = instructionString[1:]
 	}
