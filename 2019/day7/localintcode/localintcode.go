@@ -28,6 +28,8 @@ func (c *Computer) RunProgram() {
 				input := c.Input[0]
 				c.Input = c.Input[1:]
 				c.Instructions[arg1] = input
+			} else {
+				return
 			}
 			c.PC += 2
 		case 4:
