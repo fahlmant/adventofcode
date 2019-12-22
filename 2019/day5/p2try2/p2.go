@@ -32,7 +32,7 @@ func main() {
 		instructions[i], _ = strconv.Atoi(v)
 	}
 
-	computer := intcode.Computer{PC: 0, Offset: 0, Input: []int{5}, Output: 0, Instructions: instructions}
+	computer := intcode.Computer{PC: 0, Offset: 0, Input: []int{5}, Output: []int{}, Instructions: instructions}
 
 	computer.RunProgram()
 
