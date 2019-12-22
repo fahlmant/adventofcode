@@ -38,19 +38,28 @@ func main() {
 	possiblePhaseSettings := buildCombinationsList(0, 5)
 	for _, setting := range possiblePhaseSettings {
 
-		computerA := intcode.Computer{PC: 0, Offset: 0, Input: []int{setting[0], 0}, Output: 0, Instructions: instructions}
+		bInput := []int{setting[1]}
+		cInput := []int{setting[2]}
+		dInput := []int{setting[3]}
+		eInput := []int{setting[4]}
+
+		computerA := intcode.Computer{PC: 0, Offset: 0, Input: []int{setting[0], 0}, Output: []int{}, Instructions: instructions}
 		computerA.RunProgram()
-		computerB := intcode.Computer{PC: 0, Offset: 0, Input: []int{setting[1], computerA.Output}, Output: 0, Instructions: instructions}
+		bInput = append(bInput, computerA.Output...)
+		computerB := intcode.Computer{PC: 0, Offset: 0, Input: bInput, Output: []int{}, Instructions: instructions}
 		computerB.RunProgram()
-		computerC := intcode.Computer{PC: 0, Offset: 0, Input: []int{setting[2], computerB.Output}, Output: 0, Instructions: instructions}
+		cInput = append(cInput, computerB.Output...)
+		computerC := intcode.Computer{PC: 0, Offset: 0, Input: cInput, Output: []int{}, Instructions: instructions}
 		computerC.RunProgram()
-		computerD := intcode.Computer{PC: 0, Offset: 0, Input: []int{setting[3], computerC.Output}, Output: 0, Instructions: instructions}
+		dInput = append(dInput, computerC.Output...)
+		computerD := intcode.Computer{PC: 0, Offset: 0, Input: dInput, Output: []int{}, Instructions: instructions}
 		computerD.RunProgram()
-		computerE := intcode.Computer{PC: 0, Offset: 0, Input: []int{setting[4], computerD.Output}, Output: 0, Instructions: instructions}
+		eInput = append(eInput, computerD.Output...)
+		computerE := intcode.Computer{PC: 0, Offset: 0, Input: eInput, Output: []int{}, Instructions: instructions}
 		computerE.RunProgram()
 
-		if computerE.Output > max {
-			max = computerE.Output
+		if computerE.Output[0] > max {
+			max = computerE.Output[0]
 		}
 	}
 

@@ -35,7 +35,7 @@ func main() {
 	instructions[1] = 12
 	instructions[2] = 2
 
-	computer := intcode.Computer{PC: 0, Offset: 0, Input: []int{}, Output: 0, Instructions: instructions}
+	computer := intcode.Computer{PC: 0, Offset: 0, Input: []int{}, Output: []int{}, Instructions: instructions}
 
 	computer.RunProgram()
 

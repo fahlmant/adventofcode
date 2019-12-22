@@ -37,7 +37,6 @@ func (c *Computer) RunProgram() {
 				c.Instructions[arg1] = input
 				fmt.Printf("Address %d now is %d\n", arg1, c.Instructions[arg1])
 			} else {
-
 				return
 			}
 			c.PC += 2

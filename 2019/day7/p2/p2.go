@@ -31,32 +31,67 @@ func main() {
 	}
 
 	instructions := make([]int, len(instructionStrings))
+	ins1 := make([]int, len(instructionStrings))
+	ins2 := make([]int, len(instructionStrings))
+	ins3 := make([]int, len(instructionStrings))
+	ins4 := make([]int, len(instructionStrings))
+	ins5 := make([]int, len(instructionStrings))
 
 	for i, v := range instructionStrings {
 		instructions[i], _ = strconv.Atoi(v)
 	}
-	possiblePhaseSettings := buildCombinationsList(5, 10)
+
+	copy(ins1, instructions)
+	copy(ins2, instructions)
+	copy(ins3, instructions)
+	copy(ins4, instructions)
+	copy(ins5, instructions)
+	//possiblePhaseSettings := buildCombinationsList(5, 10)
+	possiblePhaseSettings := getPossibleCombos(5)
+
 	for _, setting := range possiblePhaseSettings {
 
+		fmt.Printf("Running phase setting: %+v\n", setting)
 		//Run first iteration with phase settings
-		computerA := localintcode.Computer{PC: 0, Offset: 0, Input: []int{setting[0], 0}, Output: 0, Instructions: instructions}
+		
+
+		computerA := localintcode.Computer{PC: 0, Offset: 0, Input: []int{setting[0], 0}, Output: []int{}, Instructions: ins1}
 		computerA.RunProgram()
-		computerB := intcode.Computer{PC: 0, Offset: 0, Input: []int{setting[1], computerA.Output}, Output: 0, Instructions: instructions}
+
+		computerB := localintcode.Computer{PC: 0, Offset: 0, Input: []int{setting[1]}, Output: []int{}, Instructions: ins2}	
 		computerB.RunProgram()
-		computerC := intcode.Computer{PC: 0, Offset: 0, Input: []int{setting[2], computerB.Output}, Output: 0, Instructions: instructions}
+
+		computerC := localintcode.Computer{PC: 0, Offset: 0, Input: []int{setting[2]}, Output: []int{}, Instructions: ins3}
 		computerC.RunProgram()
-		computerD := intcode.Computer{PC: 0, Offset: 0, Input: []int{setting[3], computerC.Output}, Output: 0, Instructions: instructions}
+
+		computerD := localintcode.Computer{PC: 0, Offset: 0, Input: []int{setting[3]}, Output: []int{}, Instructions: ins4}
 		computerD.RunProgram()
-		computerE := intcode.Computer{PC: 0, Offset: 0, Input: []int{setting[4], computerD.Output}, Output: 0, Instructions: instructions}
+
+		computerE := localintcode.Computer{PC: 0, Offset: 0, Input: []int{setting[4]}, Output: []int{}, Instructions: ins5}
 		computerE.RunProgram()
 
 		for computerE.Instructions[computerE.PC] != 99 {
+			computerA.Input = computerE.Output
+			computerA.RunProgram()
+
+			computerB.Input = computerA.Output
+			computerB.RunProgram()
+
+			computerC.Input = computerB.Output
+			computerC.RunProgram()
+
+			computerD.Input = computerC.Output
+			computerD.RunProgram()
+
+			computerE.Input = computerD.Output
+			computerE.RunProgram()
 
 		}
 
-		if computerE.Output > max {
-			max = computerE.Output
+		if computerE.Output[0] > max {
+			max = computerE.Output[0]
 		}
+		fmt.Println(computerE.Output)
 	}
 
 	fmt.Println(max)
@@ -68,7 +103,9 @@ func buildCombinationsList(low, high int) [][]int {
 	rand.Seed(time.Now().Unix())
 	var combinationList [][]int
 
+	x := 0
 	for len(combinationList) < (factorial(high) - factorial(low)) {
+		fmt.Printf("iteration: %d with %d of %d\n", x, len(combinationList), (factorial(high) - factorial(low)))
 		var combination string
 		for len(combination) < 5 {
 
@@ -90,7 +127,7 @@ func buildCombinationsList(low, high int) [][]int {
 		if !sliceInSlice(combinationList, stringToIntArray(combination)) {
 			combinationList = append(combinationList, stringToIntArray(combination))
 		}
-
+		x++
 	}
 
 	return combinationList
@@ -133,4 +170,28 @@ func factorial(n int) (result int) {
 		return result
 	}
 	return 1
+}
+
+func getPossibleCombos(offset int) [][]int {
+	combos := [][]int{}
+	for a := 0 + offset; a < 5+offset; a++ {
+		for b := 0 + offset; b < 5+offset; b++ {
+			for c := 0 + offset; c < 5+offset; c++ {
+				for d := 0 + offset; d < 5+offset; d++ {
+					for e := 0 + offset; e < 5+offset; e++ {
+						tester := map[int]bool{}
+						tester[a] = true
+						tester[b] = true
+						tester[c] = true
+						tester[d] = true
+						tester[e] = true
+						if len(tester) == 5 {
+							combos = append(combos, []int{a, b, c, d, e})
+						}
+					}
+				}
+			}
+		}
+	}
+	return combos
 }
