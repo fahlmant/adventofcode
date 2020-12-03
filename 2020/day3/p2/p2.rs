@@ -6,18 +6,13 @@ fn main() {
 
     let grid: Vec<&str> = contents.trim().split("\n").collect();
 
-    let total: usize = count_trees(grid.clone(), 1,3);
-    println!("{}",total);
-    let total1 = count_trees(grid.clone(), 1, 1);
-    println!("{}",total1);
-    let total2 = count_trees(grid.clone(), 1, 5);
-    println!("{}",total2);
-    let total3 = count_trees(grid.clone(), 1, 7);
-    println!("{}",total3);
-    let total4 = count_trees(grid.clone(), 2, 1);
-    println!("{}",total4);
+    let mut total: usize = count_trees(grid.clone(), 1,3);
+    total *= count_trees(grid.clone(), 1, 1);
+    total *= count_trees(grid.clone(), 1, 5);
+    total *= count_trees(grid.clone(), 1, 7);
+    total *= count_trees(grid.clone(), 2, 1);
 
-   println!("{}", total* total1 * total2 * total3 * total4);
+   println!("{}", total);
 }
 
 fn count_trees(grid: Vec<&str>, x: usize, y: usize) -> usize {
