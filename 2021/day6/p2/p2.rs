@@ -1,7 +1,7 @@
 use std::fs;
 
 fn main() {
-    let mut v: Vec<usize> = fs::read_to_string("../input").unwrap().trim().split(',').map(|i| i.parse::<usize>().unwrap()).collect();
+    let v: Vec<usize> = fs::read_to_string("../input").unwrap().trim().split(',').map(|i| i.parse::<usize>().unwrap()).collect();
 
     let mut fishes: [usize; 9] = [0,0,0,0,0,0,0,0,0];
 
@@ -9,7 +9,7 @@ fn main() {
         fishes[fish] += 1;
     }
 
-    for day in 0..256 {
+    for _ in 0..256 {
 
         let new_fish = fishes[0];
         fishes[0] = fishes[1];
