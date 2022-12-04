@@ -1,0 +1,12 @@
+[package]
+name = "advent2022day4"
+version = "0.1.0"
+authors = ["Taylor Fahlman <tfahlman@redhat.com>"]
+edition = "2021"
+
+[[bin]]
+name = "p1"
+path = "p1.rs"
+
+[dependencies]
+scan_fmt = "0.2.6"
