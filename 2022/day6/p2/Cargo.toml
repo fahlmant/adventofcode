@@ -1,0 +1,12 @@
+[package]
+name = "advent2022day6"
+version = "0.1.0"
+authors = ["Taylor Fahlman <tfahlman@redhat.com>"]
+edition = "2021"
+
+[[bin]]
+name = "p2"
+path = "p2.rs"
+
+[dependencies]
+itertools = "0.10.5"
