@@ -1,20 +1,27 @@
 use std::iter::Peekable;
 
+struct Directory(
+    Vec<Directory>, 
+    u64
+);
+
 fn main() {
     
     let contents = include_bytes!("../input");
 
-    let lines = contents.split(|b| b == &b'\n');
+    let mut lines = contents.split(|b| b == &b'\n').peekable();
 
-    let mut sum = 0;
+    let root_dir = sum_dir(&mut lines);
+    sum_dir(&mut lines.peekable());
 
-    sum_dir(&mut lines.peekable(), &mut sum);
+    let size = find_dir(&root_dir, root_dir.1 - 40_000_000);
 
-    println!("{}", sum)
+    println!("{}", size.unwrap());
 }
 
-fn sum_dir(lines: &mut Peekable<impl Iterator<Item = &'static [u8]>>, sum: &mut u64) -> u64 {
+fn sum_dir(lines: &mut Peekable<impl Iterator<Item = &'static [u8]>>) -> Directory {
     let mut dir_size: u64 = 0;
+    let mut subdirs = vec![];
     
     while let Some(x) = lines.next() {
         match x {
@@ -37,14 +44,13 @@ fn sum_dir(lines: &mut Peekable<impl Iterator<Item = &'static [u8]>>, sum: &mut 
  
                 }    
             }
-            _ => dir_size += sum_dir(lines, sum)
+            _ => subdirs.push(sum_dir(lines))
         }
     }
-
-    if dir_size < 100_000 {
-        *sum += dir_size
-    }
-
-    return dir_size
+    dir_size += subdirs.iter().map(|d| d.1).sum::<u64>();
+    return Directory(subdirs, dir_size)
 }
 
+fn find_dir(root: &Directory, min_size: u64) -> Option<u64> {
+    root.0.iter().filter(|d| d.1 >= min_size).flat_map(|d| [Some(d.1), find_dir(d, min_size)]).flatten().min()
+}
