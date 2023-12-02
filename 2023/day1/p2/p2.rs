@@ -5,7 +5,6 @@ fn main() {
     // Use fs to get all input to a Result<String>, which is then unwrapped
     let contents = fs::read_to_string("../input").unwrap();
 
-    // Initalize var to hold the highest calorie count
     let mut total = 0;
 
     for line in contents.trim().split('\n').enumerate() {
