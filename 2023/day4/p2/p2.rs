@@ -24,8 +24,6 @@ fn main() {
             }
         }
 
-        println!("Current index {}", current_index);
-        println!("Number of winners {}", winner_numbers);
         for i in current_index+1..current_index+winner_numbers+1 {
             card_count[i] += card_count[current_index];
         }
