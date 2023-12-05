@@ -10,7 +10,6 @@ fn main() {
     
     let mut card_count: Vec<i32> = vec![1 as i32; lines.clone().count()];
 
-    let mut current_index = 0;
     for line in lines.enumerate() {
         let card: Vec<&str> = line.1.split(":").collect();
         let values: Vec<&str> = card[1].split("|").collect();
@@ -24,11 +23,9 @@ fn main() {
             }
         }
 
-        for i in current_index+1..current_index+winner_numbers+1 {
-            card_count[i] += card_count[current_index];
+        for i in line.0+1..line.0+winner_numbers+1 {
+            card_count[i] += card_count[line.0];
         }
-
-        current_index += 1;
     }
 
     total = card_count.iter().sum();
