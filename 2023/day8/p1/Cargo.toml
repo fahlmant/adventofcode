@@ -1,8 +1,8 @@
 [package]
-name = "advent2023day6"
+name = "advent2023day8"
 version = "0.1.0"
 authors = ["Taylor Fahlman <tfahlman@redhat.com>"]
 
 [[bin]]
-name = "p2"
-path = "p2.rs"
+name = "p1"
+path = "p1.rs"
