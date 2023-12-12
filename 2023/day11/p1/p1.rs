@@ -51,7 +51,6 @@ fn main() {
                 col_expansion += 1;
             }
         }
-        //println!("Extra rows between ")
 
         for j in cmp::min(g[0].1,g[1].1)..cmp::max(g[0].1,g[1].1){
             if extra_rows.contains(&j) {
