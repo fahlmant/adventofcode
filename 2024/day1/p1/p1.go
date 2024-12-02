@@ -14,7 +14,7 @@ func main() {
 
 	total := 0
 
-	file, err := os.Open("../../input")
+	file, err := os.Open("../input")
 	if err != nil {
 		log.Fatal(err)
 	}
