@@ -78,8 +78,8 @@ func getResult(equationNums []int, total int, target int, operation string) bool
 		return newTotal == target
 	}
 
-	addResult := getResult(equationNums[1:len(equationNums)], newTotal, target, "+")
-	mulResult := getResult(equationNums[1:len(equationNums)], newTotal, target, "*")
+	addResult := getResult(equationNums[1:], newTotal, target, "+")
+	mulResult := getResult(equationNums[1:], newTotal, target, "*")
 
 	return addResult || mulResult
 }
