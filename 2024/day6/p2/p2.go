@@ -78,6 +78,9 @@ func main() {
 		trackedPositions[nextLocation] = true
 	}
 
+	// Takes all the positions we visited in the original
+	// and tries out traversal with an obstacle in each position
+	// If we find a loop with that obstacle location, we add it to the answer
 	for loc := range trackedPositions {
 		copyGrid := make([][]byte, len(grid))
 		for i := range grid {
@@ -113,9 +116,11 @@ func doesConfigHaveLoop(grid [][]byte, startPos Location) bool {
 			currentDir = rotateDirection(currentDir)
 			continue
 		}
-		// Set the current position to the next position and add it to the visited locations
 		position = nextLocation
+		// Combine direction and position
 		dirWithPos := DirectionLocation{location: position, direction: currentDir}
+		// Check if we've already visited this position with this direction
+		// If so, then we've found a loop!
 		if visitedWithDir[dirWithPos] {
 			return true
 		}
