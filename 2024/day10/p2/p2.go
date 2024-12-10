@@ -42,10 +42,7 @@ func main() {
 		for i := range grid[j] {
 			if grid[j][i] == 0 {
 
-				total += findUniqueReachableNines(grid, Location{x: i + 1, y: j}, 1)
-				total += findUniqueReachableNines(grid, Location{x: i - 1, y: j}, 1)
-				total += findUniqueReachableNines(grid, Location{x: i, y: j + 1}, 1)
-				total += findUniqueReachableNines(grid, Location{x: i, y: j - 1}, 1)
+				total += findUniqueReachableNines(grid, Location{x: i, y: j}, 0)
 			}
 		}
 	}

@@ -43,10 +43,7 @@ func main() {
 			if grid[j][i] == 0 {
 				// Find unique 9s that are reachable by this location
 				nineLocations := make(map[Location]bool)
-				findUniqueReachableNines(nineLocations, grid, Location{x: i + 1, y: j}, 1)
-				findUniqueReachableNines(nineLocations, grid, Location{x: i - 1, y: j}, 1)
-				findUniqueReachableNines(nineLocations, grid, Location{x: i, y: j + 1}, 1)
-				findUniqueReachableNines(nineLocations, grid, Location{x: i, y: j - 1}, 1)
+				findUniqueReachableNines(nineLocations, grid, Location{x: i, y: j}, 0)
 				total += len(nineLocations)
 			}
 		}
