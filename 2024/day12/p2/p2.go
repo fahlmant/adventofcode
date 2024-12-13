@@ -56,47 +56,39 @@ func getNumberOfCorners(grid [][]byte, shape Shape) int {
 		// Top left corner
 		// If the letter to the left AND above are not the letter, it's a corner
 		if (!isWithinGrid(grid, Location{x: l.x - 1, y: l.y}) || grid[l.y][l.x-1] != grid[l.y][l.x]) && (!isWithinGrid(grid, Location{x: l.x, y: l.y - 1}) || grid[l.y-1][l.x] != grid[l.y][l.x]) {
-			fmt.Printf("Location %d, %d is a top left corner for %c\n", l.x, l.y, grid[l.y][l.x])
 			corners += 1
 		}
 		// Top right corner
 		// If the letter to the right AND above are not the letter, it's a corner
 		if (!isWithinGrid(grid, Location{x: l.x + 1, y: l.y}) || grid[l.y][l.x+1] != grid[l.y][l.x]) && (!isWithinGrid(grid, Location{x: l.x, y: l.y - 1}) || grid[l.y-1][l.x] != grid[l.y][l.x]) {
-			fmt.Printf("Location %d, %d is a top right corner for %c\n", l.x, l.y, grid[l.y][l.x])
 			corners += 1
 		}
 		// Bottom left corner
 		// If the letter to the left AND below are not the letter, it's a corner
 		if (!isWithinGrid(grid, Location{x: l.x - 1, y: l.y}) || grid[l.y][l.x-1] != grid[l.y][l.x]) && (!isWithinGrid(grid, Location{x: l.x, y: l.y + 1}) || grid[l.y+1][l.x] != grid[l.y][l.x]) {
-			fmt.Printf("Location %d, %d is a bottom left corner for %c\n", l.x, l.y, grid[l.y][l.x])
 			corners += 1
 		}
 		// Bottom right corner
 		// If the letter to the right AND below are not the letter, it's a corner
 		if (!isWithinGrid(grid, Location{x: l.x + 1, y: l.y}) || grid[l.y][l.x+1] != grid[l.y][l.x]) && (!isWithinGrid(grid, Location{x: l.x, y: l.y + 1}) || grid[l.y+1][l.x] != grid[l.y][l.x]) {
-			fmt.Printf("Location %d, %d is a bottom right corner for %c\n", l.x, l.y, grid[l.y][l.x])
 			corners += 1
 		}
 		// Top left inner corner
 		// If letter to the left AND above are the same as letter, but letter to the diagonal upper left isn't, it's an inner corner
 		if (isWithinGrid(grid, Location{x: l.x - 1, y: l.y}) && isWithinGrid(grid, Location{x: l.x, y: l.y - 1}) && isWithinGrid(grid, Location{x: l.x - 1, y: l.y - 1})) && grid[l.y][l.x-1] == grid[l.y][l.x] && grid[l.y-1][l.x] == grid[l.y][l.x] && grid[l.y-1][l.x-1] != grid[l.y][l.x] {
-			fmt.Printf("Location %d, %d is a top left inner corner for %c\n", l.x, l.y, grid[l.y][l.x])
 			corners += 1
 		}
 		// Top right inner
 		// If letter to the right AND above are the same as letter, but letter to the diagonal upper right isn't, it's an inner corner
 		if (isWithinGrid(grid, Location{x: l.x + 1, y: l.y}) && isWithinGrid(grid, Location{x: l.x, y: l.y - 1}) && isWithinGrid(grid, Location{x: l.x + 1, y: l.y - 1})) && grid[l.y][l.x+1] == grid[l.y][l.x] && grid[l.y-1][l.x] == grid[l.y][l.x] && grid[l.y-1][l.x+1] != grid[l.y][l.x] {
-			fmt.Printf("Location %d, %d is a top right inner corner for %c\n", l.x, l.y, grid[l.y][l.x])
 			corners += 1
 		}
 		// Bottom left inner corner
 		if (isWithinGrid(grid, Location{x: l.x - 1, y: l.y}) && isWithinGrid(grid, Location{x: l.x, y: l.y + 1}) && isWithinGrid(grid, Location{x: l.x - 1, y: l.y + 1})) && grid[l.y][l.x-1] == grid[l.y][l.x] && grid[l.y+1][l.x] == grid[l.y][l.x] && grid[l.y+1][l.x-1] != grid[l.y][l.x] {
-			fmt.Printf("Location %d, %d is a bottom left inner corner for %c\n", l.x, l.y, grid[l.y][l.x])
 			corners += 1
 		}
 		// Bottom right inner corner
 		if (isWithinGrid(grid, Location{x: l.x + 1, y: l.y}) && isWithinGrid(grid, Location{x: l.x, y: l.y + 1}) && isWithinGrid(grid, Location{x: l.x + 1, y: l.y + 1})) && grid[l.y][l.x+1] == grid[l.y][l.x] && grid[l.y+1][l.x] == grid[l.y][l.x] && grid[l.y+1][l.x+1] != grid[l.y][l.x] {
-			fmt.Printf("Location %d, %d is a bottom right inner  corner for %c\n", l.x, l.y, grid[l.y][l.x])
 			corners += 1
 		}
 	}
