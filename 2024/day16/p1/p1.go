@@ -89,39 +89,31 @@ func calculateScore(path []Vector) int {
 
 	score += len(path)
 
-	turns := countTurns(path)
+	for n := 2; n < len(path); n++ {
+		currentPos := path[n]
+		prevPos := path[n-1]
+		prevPrevPos := path[n-2]
 
-	// Check if the second node is a turn from east
-	if path[1].y != path[0].y {
-		turns += 1
-	}
+		dx1 := currentPos.x - prevPos.x
+		dx2 := prevPos.x - prevPrevPos.x
 
-	score += turns * 1000
-	return score
+		dy1 := currentPos.y - prevPos.y
+		dy2 := prevPos.y - prevPrevPos.y
 
-}
-
-func countTurns(path []Vector) int {
-	total := 0
-	if len(path) < 3 {
-		return 0
-	}
-
-	for i := 2; i < len(path); i++ {
-		prev := path[i-1]
-		beforePrev := path[i-2]
-		current := path[i]
-
-		// Calculate movement directions
-		dx1, dy1 := prev.x-beforePrev.x, prev.y-beforePrev.y
-		dx2, dy2 := current.x-prev.x, current.y-prev.y
-
-		// A 90-degree turn occurs if the movement switches axes
-		if (dx1 == 0 && dy2 == 0) || (dy1 == 0 && dx2 == 0) {
-			total += 1
+		// If the change in x is 0, then two positions on the same row,
+		// if the change in y is 0, then two positions are on the same column
+		// So if between three consecutive nodes in the path, there is a change from row to column, we've moved 90 degrees
+		if (dx1 == 0 && dy2 == 0) || (dx2 == 0 && dy1 == 0) {
+			score += 1000
 		}
 	}
-	return total
+
+	// If the second node in the path is not on the same X, we've turned from east
+	if path[1].y != path[0].y {
+		score += 1000
+	}
+
+	return score
 }
 
 func isVectorIn(list []Vector, target Vector) bool {
