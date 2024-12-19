@@ -11,6 +11,7 @@ fn main() {
     let green = 13;
     let blue = 14;
 
+    // Game 1: 8 green; 5 green, 6 blue, 1 red; 2 green, 1 blue, 4 red; 10 green, 1 red, 2 blue; 2 blue, 3 red
     'label: for line in contents.trim().split('\n').enumerate() {
         let first_split = line.1.split(':');
         let collection: Vec<&str> = first_split.collect();
