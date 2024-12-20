@@ -47,12 +47,12 @@ func isDesignPossible(towels []string, design string) bool {
 		cache[t] = true
 	}
 
-	isPossible := designCheck(towelsAsBytes, localDesign, cache, 0)
+	isPossible := designCheck(towelsAsBytes, localDesign, cache)
 
 	return isPossible
 }
 
-func designCheck(towels [][]byte, target []byte, cache map[string]bool, depth int) bool {
+func designCheck(towels [][]byte, target []byte, cache map[string]bool) bool {
 
 	// If we already know the target (all of the rest of the string) is possible, don't check
 	if b, exists := cache[string(target)]; exists {
@@ -69,7 +69,7 @@ func designCheck(towels [][]byte, target []byte, cache map[string]bool, depth in
 			continue
 		}
 		if strings.HasPrefix(string(target), string(t)) {
-			result := designCheck(towels, target[len(t):], cache, depth+1)
+			result := designCheck(towels, target[len(t):], cache)
 			if result {
 				cache[string(target)] = true
 				return true
