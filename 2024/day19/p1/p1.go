@@ -64,15 +64,12 @@ func designCheck(towels [][]byte, target []byte, cache map[string]bool, depth in
 		return true
 	}
 
-	var areAnyPossible []bool
 	for _, t := range towels {
 		if len(t) > len(target) {
 			continue
 		}
 		if strings.HasPrefix(string(target), string(t)) {
 			result := designCheck(towels, target[len(t):], cache, depth+1)
-			areAnyPossible = append(areAnyPossible, result)
-
 			if result {
 				cache[string(target)] = true
 				return true
