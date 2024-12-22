@@ -2,13 +2,63 @@ package main
 
 import (
 	"bufio"
+	"container/heap"
 	"fmt"
 	"log"
+	"math"
 	"os"
 )
 
 type Vector struct {
 	x, y int
+}
+
+// Node tracks information about each position in the grid
+type Node struct {
+	position          Vector
+	cost              int
+	previousDirection Vector
+	index             int
+}
+
+var NORTH = Vector{x: 0, y: -1}
+var EAST = Vector{x: 1, y: 0}
+var SOUTH = Vector{x: 0, y: 1}
+var WEST = Vector{x: -1, y: 0}
+
+// Priority queue type to use with heap
+type PQ []*Node
+
+// Functions to implement heap interface
+func (pq PQ) Len() int {
+	return len(pq)
+}
+
+func (pq PQ) Less(a, b int) bool {
+	return pq[a].cost < pq[b].cost
+}
+
+func (pq PQ) Swap(a, b int) {
+	pq[a], pq[b] = pq[b], pq[a]
+	pq[a].index = a
+	pq[b].index = b
+}
+
+func (pq *PQ) Push(x interface{}) {
+	n := len(*pq)
+	node := x.(*Node)
+	node.index = n
+	*pq = append(*pq, node)
+}
+
+func (pq *PQ) Pop() interface{} {
+	old := *pq
+	n := len(old)
+	node := old[n-1]
+	old[n-1] = nil
+	node.index = -1
+	*pq = old[0 : n-1]
+	return node
 }
 
 func main() {
@@ -44,76 +94,65 @@ func main() {
 		}
 	}
 
-	visited := make(map[Vector]bool)
-	path := []Vector{}
-	allPaths := [][]Vector{}
-	allPaths = findAllPaths(grid, startingPosition, endingPosition, visited, path, allPaths)
-	minScore := calculateScore(allPaths[0])
-	for i := 1; i < len(allPaths); i++ {
-		newScore := calculateScore(allPaths[i])
-		if newScore < minScore {
-			minScore = newScore
-		}
-	}
-
-	total = minScore
+	total = findShortestPath(grid, startingPosition, endingPosition)
 
 	fmt.Println(total)
 }
 
-func findAllPaths(grid [][]byte, currentPosition, endingPosition Vector, visited map[Vector]bool, path []Vector, allPaths [][]Vector) [][]Vector {
+func findShortestPath(grid [][]byte, startPosition, endPosition Vector) int {
 
-	if currentPosition == endingPosition {
-		allPaths = append(allPaths, path)
-		return allPaths
+	shortestDistances := make(map[Vector]int)
+
+	pq := make(PQ, 0)
+	heap.Init(&pq)
+
+	startNode := Node{
+		position:          startPosition,
+		cost:              0,
+		previousDirection: EAST,
 	}
 
-	visited[currentPosition] = true
+	pq.Push(&startNode)
+	shortestDistances[startPosition] = 0
 
-	for _, dir := range []Vector{{x: 1, y: 0}, {x: -1, y: 0}, {x: 0, y: 1}, {x: 0, y: -1}} {
-		newPos := Vector{x: currentPosition.x + dir.x, y: currentPosition.y + dir.y}
-		if isValidPosition(grid, newPos) && !visited[newPos] {
-			newPath := append(path, newPos)
-			allPaths = findAllPaths(grid, newPos, endingPosition, visited, newPath, allPaths)
+	for pq.Len() > 0 {
+		current := heap.Pop(&pq).(*Node)
+
+		if current.position == endPosition {
+			return current.cost
 		}
-	}
 
-	visited[currentPosition] = false
-
-	return allPaths
-}
-
-func calculateScore(path []Vector) int {
-
-	score := 0
-
-	score += len(path)
-
-	for n := 2; n < len(path); n++ {
-		currentPos := path[n]
-		prevPos := path[n-1]
-		prevPrevPos := path[n-2]
-
-		dx1 := currentPos.x - prevPos.x
-		dx2 := prevPos.x - prevPrevPos.x
-
-		dy1 := currentPos.y - prevPos.y
-		dy2 := prevPos.y - prevPrevPos.y
-
-		// If the change in x is 0, then two positions on the same row,
-		// if the change in y is 0, then two positions are on the same column
-		// So if between three consecutive nodes in the path, there is a change from row to column, we've moved 90 degrees
-		if (dx1 == 0 && dy2 == 0) || (dx2 == 0 && dy1 == 0) {
-			score += 1000
+		if dist, ok := shortestDistances[current.position]; ok && dist < current.cost {
+			continue
 		}
+
+		for _, dir := range []Vector{NORTH, SOUTH, EAST, WEST} {
+			newPosition := Vector{x: current.position.x + dir.x, y: current.position.y + dir.y}
+
+			if !isValidPosition(grid, newPosition) {
+				continue
+			}
+
+			newCost := current.cost + 1
+			if dir != current.previousDirection {
+				newCost += 1000
+			}
+
+			if oldCost, ok := shortestDistances[newPosition]; !ok || newCost < oldCost {
+				shortestDistances[newPosition] = newCost
+
+				heap.Push(&pq, &Node{
+					position:          newPosition,
+					cost:              newCost,
+					previousDirection: dir,
+				})
+			}
+
+		}
+
 	}
 
-	// If the second node in the path is not on the same X, we've turned from east
-	if path[1].y != path[0].y {
-		score += 1000
-	}
-
-	return score
+	return math.MaxInt
 }
 
 func isVectorIn(list []Vector, target Vector) bool {
